@@ -99,9 +99,14 @@
 
 import Hotel from "../infastructure/schemas/Hotel.js";
 
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve,ms));
+};
 export const getAllHotels = async(req, res) => {
+
   const hotels = await Hotel.find();
   res.status(200).json(hotels);
+  return;
 };
 
 export const getHotelById =  async(req, res) => {
