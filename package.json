@@ -12,10 +12,10 @@
   },
   "license": "ISC",
   "author": "",
-  "type": "module",
-  "main": "index.js",
+  
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon src/index.ts",
+    "start": "ts-node src/index.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -24,5 +24,13 @@
     "mongodb": "^6.13.1",
     "mongoose": "^8.10.1",
     "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^22.13.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   }
 }
