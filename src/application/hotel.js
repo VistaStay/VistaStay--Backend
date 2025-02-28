@@ -102,10 +102,14 @@ import Hotel from "../infastructure/schemas/Hotel.js";
 const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve,ms));
 };
+
+
 export const getAllHotels = async(req, res) => {
 
   const hotels = await Hotel.find();
+  //await sleep(500);
   res.status(200).json(hotels);
+  //res.status(400).json(hotels);
   return;
 };
 
