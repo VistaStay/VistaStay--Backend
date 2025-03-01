@@ -12,13 +12,11 @@ const hotelScheme = new mongoose.Schema({
     },
     rating:{
         type:Number,
-        required:true,
         min:1,
         max:5,
     },
     reviews:{
         type:Number,
-        required:true,
     },
     image:{
         type:String,
