@@ -1,57 +1,43 @@
-import { NextFunction, Request , Response } from "express";
-import Booking from "../infastructure/schemas/Booking"
+import { NextFunction, Request, Response } from "express";
+import ValidationError from "../domain/errors/validation-error";
+import { CreateBookingDTO } from "../domain/dtos/booking";
+import Booking from "../infastructure/schemas/Booking";
 
-export const createBooking = async(req : Request ,res : Response , next : NextFunction) => {
-    try {
-        const booking = req.body;
-    //validate this data
-    if(
-        !booking.hotelId ||
-        !booking.userId ||
-        !booking.checkIn ||
-        !booking.checkout||
-        !booking.roomNumber
-    ) {
-        res.status(400).send();
-        return;
+export const createBooking = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const booking = CreateBookingDTO.safeParse(req.body);
+
+    if (!booking.success) {
+      throw new ValidationError(booking.error.message);
     }
-    //Add the booking
-    await Booking.create({
-        hotelId: booking.hotelId,
-        userId: booking.userId,
-        checkIn:booking.checkIn,
-        checkout:booking.checkout,
-        roomNumber:booking.roomNumber,
+
+    const user = req.auth; // Get authenticated user
+    if (!user || !user.userId) {
+      throw new ValidationError("User authentication failed");
+    }
+
+    // Generate a random room number between 100 and 500
+    const randomRoomNumber = Math.floor(Math.random() * 400) + 100;
+
+    // Create booking in the database
+    const newBooking = await Booking.create({
+      hotelId: booking.data.hotelId,
+      userId: user.userId,
+      checkIn: booking.data.checkIn,
+      checkOut: booking.data.checkOut,
+      roomNumber: randomRoomNumber,
     });
 
-    //return the response
-    res.status(201).send();
+    res.status(201).json({
+      message: "Booking created successfully",
+      bookingId: newBooking._id,
+    });
     return;
-    } catch (error) {
-        next(error);
-    }
-    
+  } catch (error) {
+    next(error);
+  }
 };
-
-export const getAllBookingsForHotel = async (req :Request, res :Response ,next : NextFunction) => {
-    try {
-        const hotelId = req.params.hotelId;
-        const bookings = await Booking.find({ hotelId: hotelId }).populate("userId");
-      
-        res.status(200).json(bookings);
-        return; 
-    } catch (error) {
-        next(error);
-    }
-    
-  };
-  
-  export const getAllBookings = async (req :Request, res : Response ,next : NextFunction) => {
-    try {
-        const bookings = await Booking.find();
-        res.status(200).json(bookings);
-        return;
-    } catch (error) {
-       next(error);
-    }
-  };

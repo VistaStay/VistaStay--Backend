@@ -12,11 +12,20 @@ const globalErrorHandlingMiddleware = (
         return;
     }
 
-    if(error.name === "VlidationError"){
+    if(error.name === "ValidationError"){
         res.status(400).json({ message: error.message });
         return;
     }
 
+    if (error.name === "UnauthorizedError"){
+        res.status(401).json({ message: error.message });
+        return;
+    }
+
+    if (error.name === "FobiddenError"){
+        res.status(403).json({ message: error.message });
+        return;
+    }
     res.status(500).json({ message: "Internal Server Error" });
 };
 

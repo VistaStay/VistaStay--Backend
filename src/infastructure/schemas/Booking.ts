@@ -1,32 +1,33 @@
-//mongodb wlata therene widiyata ape file ekee struture ek withara kara deema
 import mongoose from "mongoose";
 
-const bookingScheme = new mongoose.Schema({
-    hotelId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Hotel",
-        required:true,
+const bookingSchema = new mongoose.Schema({
+    hotelId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Hotel",
+        required: true,
     },
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true,
+    userId: {
+        type: String,
+        ref: "User",
+        required: true,
     },
-    checkIn:{
-        type:Date,
-        required:true,
+    checkIn: {
+        type: Date,
+        required: true,
     },
-    checkout:{
-        type:Date,
-        required:true,
+    checkOut: {
+        type: Date,
+        required: true,
     },
-    roomNumber:{
-        type:Number,
-        required:true,
-    }
- 
+    roomNumber: {
+        type: Number,
+        required: true,
+        default: function () {
+            return Math.floor(Math.random() * 400) + 100; // Auto-generate room number
+        },
+    },
 });
 
-const Booking = mongoose.model("Booking",bookingScheme);
+const Booking = mongoose.model("Booking", bookingSchema);
 
 export default Booking;

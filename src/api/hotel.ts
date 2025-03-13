@@ -1,5 +1,7 @@
 import express from "express";
-import { getAllHotels, getHotelById, createHotel, deleteHotel, updateHotel } from "../application/hotel";
+import { getAllHotels, getHotelById, createHotel, deleteHotel, updateHotel, chatbot  } from "../application/hotel";
+import { isAuthenticated } from "./middlewares/authentication-middleware";
+import { isAdmin } from "./middlewares/authorization-middleware";
 
 const hotelRouter = express.Router();
 
@@ -9,11 +11,11 @@ const hotelRouter = express.Router();
 // hotelRouter.delete("/:id", deleteHotel);
 // hotelRouter.put("/:id", updateHotel);
 
-hotelRouter.route("/").get(getAllHotels).post(createHotel);
+hotelRouter.route("/").get(getAllHotels).post(isAuthenticated,isAdmin,createHotel);
 hotelRouter
     .route("/:id")
     .get(getHotelById)
     .put(updateHotel)
     .delete(deleteHotel);
-
+hotelRouter.route("/llm").post(chatbot);
 export default hotelRouter;
