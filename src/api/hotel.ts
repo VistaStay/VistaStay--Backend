@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllHotels, getHotelById, createHotel, deleteHotel, updateHotel } from "../application/hotel";
+import { getAllHotels, getHotelById, createHotel, deleteHotel, updateHotel, generateResonse } from "../application/hotel";
 import { isAuthenticated } from "./middlewares/authentication-middleware";
 import { isAdmin } from "./middlewares/authorization-middleware";
 
@@ -17,5 +17,5 @@ hotelRouter
     .get(getHotelById)
     .put(updateHotel)
     .delete(deleteHotel);
-
+hotelRouter.route("/llm").post(generateResonse);
 export default hotelRouter;

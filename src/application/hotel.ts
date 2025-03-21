@@ -4,6 +4,7 @@ import Hotel from "../infastructure/schemas/Hotel";
 import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
 import { CreateHotelDTO } from "../domain/dtos/hotel";
+import OpenAI from "openai";
 
 const sleep = (ms:number) => {
   return new Promise(resolve => setTimeout(resolve,ms));
@@ -114,5 +115,37 @@ export const updateHotel = async (req :Request, res:Response) => {
   } catch (error) {
     
   }
-  
 };
+
+
+//implement chgpt API
+export const generateResonse= async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+) => {
+  const {prompt} = req.body;
+
+  const openai = new OpenAI({
+    apiKey:process.env.OPEN_API_KEY,
+  });
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+        {
+            role: "system",
+            content: "You are a helpful assistant",
+        },
+        {
+          role: "user",
+            content: prompt,
+        }
+    ],
+    store:true,
+});
+
+  console.log(completion.choices[0].message);
+  res.status(200).json({message:completion.choices[0].message.content});
+  return;
+}
+
