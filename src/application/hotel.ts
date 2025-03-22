@@ -151,28 +151,71 @@ export const updateHotel = async (req :Request, res:Response) => {
 
 
 //conversational system
-export const generateResonse= async(
-  req:Request,
-  res:Response,
-  next:NextFunction
+// export const generateResonse= async(
+//   req:Request,
+//   res:Response,
+//   next:NextFunction
+// ) => {
+//   const {messages} = req.body;
+
+//   const openai = new OpenAI({
+//     apiKey:process.env.OPEN_API_KEY,
+//   });
+//   const completion = await openai.chat.completions.create({
+//     model: "gpt-4o",
+//     messages:
+//       messages.length === 1
+//       ?[
+//         {
+//           role:"system",
+//           content:"youa are the assitent that works as a reciptionist in on role and you are going to talk to usrs and help them find the right entertaitment",
+//         },
+//         ...messages,
+//       ]
+//       : messages,
+//     store:true,
+// });
+
+// res.status(200).json({
+//   messages:[
+//     ...messages,
+//     {role : "assistant" , content : completion.choices[0].message.content},
+//   ]
+// })
+// }
+
+//system prompot
+export const generateResonse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
-  const {messages} = req.body;
+  const { prompt } = req.body; // Fixed typo
 
   const openai = new OpenAI({
-    apiKey:process.env.OPEN_API_KEY,
+    apiKey: process.env.OPEN_API_KEY,
   });
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages,
-    store:true,
-});
 
-res.status(200).json({
-  messages:[
-    ...messages,
-    {role : "assistant" , content : completion.choices[0].message.content},
-  ]
-})
-}
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an assistant. Categorize the words that a user gives, assign labels, and show an output. Return this response as the following example: user:Lake,cat,Dog,Tree response:[{lable:Nature,words:['Lake','Tree'}] {label:Aniamls,words:['Cat','Dog']}",
+        },
+        { role: "user", content: prompt }, // Fixed typo
+      ],
+    });
 
-
+    res.status(200).json({
+      messages: {
+        role: "assistant", // Fixed typo
+        content: completion.choices[0]?.message?.content || "No response",
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
