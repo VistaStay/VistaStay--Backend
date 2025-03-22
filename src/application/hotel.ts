@@ -185,6 +185,42 @@ export const updateHotel = async (req :Request, res:Response) => {
 // }
 
 //system prompot
+// export const generateResonse = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { prompt } = req.body; // Fixed typo
+
+//   const openai = new OpenAI({
+//     apiKey: process.env.OPEN_API_KEY,
+//   });
+
+//   try {
+//     const completion = await openai.chat.completions.create({
+//       model: "gpt-4o",
+//       messages: [
+//         {
+//           role: "system",
+//           content:
+//             "You are an assistant. Categorize the words that a user gives, assign labels, and show an output. Return this response as the following example: user:Lake,cat,Dog,Tree response:[{lable:Nature,words:['Lake','Tree'}] {label:Aniamls,words:['Cat','Dog']}",
+//         },
+//         { role: "user", content: prompt }, // Fixed typo
+//       ],
+//     });
+
+//     res.status(200).json({
+//       messages: {
+//         role: "assistant", // Fixed typo
+//         content: completion.choices[0]?.message?.content || "No response",
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+//few shot prompt
 export const generateResonse = async (
   req: Request,
   res: Response,
@@ -203,7 +239,7 @@ export const generateResonse = async (
         {
           role: "system",
           content:
-            "You are an assistant. Categorize the words that a user gives, assign labels, and show an output. Return this response as the following example: user:Lake,cat,Dog,Tree response:[{lable:Nature,words:['Lake','Tree'}] {label:Aniamls,words:['Cat','Dog']}",
+            "You are an assistant. Categorize the words that a user gives, assign labels, and show an output. Return this response as the following examples: user:Lake,cat,Dog,Tree; response:[{lable:Nature,words:['Lake','Tree'}] {label:Aniamls,words:['Cat','Dog']}",
         },
         { role: "user", content: prompt }, // Fixed typo
       ],
@@ -219,3 +255,4 @@ export const generateResonse = async (
     next(error);
   }
 };
+

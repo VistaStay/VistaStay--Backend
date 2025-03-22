@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 import Booking from "../infastructure/schemas/Booking";
 
+
 export const createBooking = async (
   req: Request,
   res: Response,
@@ -69,34 +70,3 @@ export const getAllBookings = async (
   }
 };
 
-//Implement Chatgpt AI
-//implement chgpt llm
-export const generateResonse= async(
-  req:Request,
-  res:Response,
-  next:NextFunction
-) => {
-  const {prompt} = req.body;
-
-  const openai = new OpenAI({
-    apiKey:process.env.OPEN_API_KEY,
-  });
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-        {
-            role: "system",
-            content: "You are a helpful assistant",
-        },
-        {
-          role: "user",
-            content: prompt,
-        }
-    ],
-    store:true,
-});
-
-  console.log(completion.choices[0].message);
-  res.status(200).json({message:completion.choices[0].message.content});
-  return;
-}
