@@ -57,7 +57,11 @@ export const createHotel = async (req: Request, res: Response, next: NextFunctio
       name: hotel.data.name,
       location: hotel.data.location,
       image: hotel.data.image,
+<<<<<<< Updated upstream
       price: hotel.data.price ,
+=======
+      price: hotel.data.price ,// Ensuring proper parsing
+>>>>>>> Stashed changes
       description: hotel.data.description,
     });
 
