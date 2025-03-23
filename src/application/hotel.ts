@@ -57,7 +57,7 @@ export const createHotel = async (req: Request, res: Response, next: NextFunctio
       name: hotel.data.name,
       location: hotel.data.location, // Fixed incorrect property assignment
       image: hotel.data.image,
-      price:  parseInt(hotel.data.price) ,// Ensuring proper parsing
+      price: hotel.data.price ,// Ensuring proper parsing
       description: hotel.data.description,
     });
 

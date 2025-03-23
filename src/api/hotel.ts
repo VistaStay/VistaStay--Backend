@@ -3,6 +3,9 @@ import { getAllHotels, getHotelById, createHotel, deleteHotel, updateHotel, gene
 import { isAuthenticated } from "./middlewares/authentication-middleware";
 import { isAdmin } from "./middlewares/authorization-middleware";
 import { createEmbeddings } from "./embedding";
+import { retrieve } from "../application/retrive";
+
+
 
 const hotelRouter = express.Router();
 
@@ -20,4 +23,5 @@ hotelRouter
     .delete(deleteHotel);
 hotelRouter.route("/llm").post(generateResonse);
 hotelRouter.route("/embeddings/create").post(createEmbeddings);
+hotelRouter.route("/search/retrive").get(retrieve);
 export default hotelRouter;
