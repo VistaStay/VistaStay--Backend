@@ -49,15 +49,29 @@ export const createHotel = async (req: Request, res: Response, next: NextFunctio
   try {
     const hotel = CreateHotelDTO.safeParse(req.body);
 
+<<<<<<< HEAD
     if (!hotel.success) {  // Fixed spelling mistake
+=======
+    if (!hotel.success) { 
+>>>>>>> test7
       throw new ValidationError(hotel.error.message);
     }
 
     await Hotel.create({
       name: hotel.data.name,
+<<<<<<< HEAD
       location: hotel.data.location, // Fixed incorrect property assignment
       image: hotel.data.image,
       price:  parseInt(hotel.data.price) ,// Ensuring proper parsing
+=======
+      location: hotel.data.location,
+      image: hotel.data.image,
+<<<<<<< Updated upstream
+      price: hotel.data.price ,
+=======
+      price: hotel.data.price ,// Ensuring proper parsing
+>>>>>>> Stashed changes
+>>>>>>> test7
       description: hotel.data.description,
     });
 
@@ -115,6 +129,7 @@ export const updateHotel = async (req :Request, res:Response) => {
   } catch (error) {
     
   }
+<<<<<<< HEAD
   
 };
 
@@ -148,3 +163,146 @@ export const generateResonse= async(
   res.status(200).json({message:completion.choices[0].message.content});
   return;
 }
+=======
+};
+
+
+//implement chgpt API
+// export const generateResonse= async(
+//   req:Request,
+//   res:Response,
+//   next:NextFunction
+// ) => {
+//   const {prompt} = req.body;
+
+//   const openai = new OpenAI({
+//     apiKey:process.env.OPEN_API_KEY,
+//   });
+//   const completion = await openai.chat.completions.create({
+//     model: "gpt-4o",
+//     messages: [
+//         {
+//             role: "system",
+//             content: "You are a helpful assistant",
+//         },
+//         {
+//           role: "user",
+//             content: prompt,
+//         }
+//     ],
+//     store:true,
+// });
+
+//   console.log(completion.choices[0].message);
+//   res.status(200).json({message:completion.choices[0].message.content});
+//   return;
+// }
+
+
+//conversational system
+// export const generateResonse= async(
+//   req:Request,
+//   res:Response,
+//   next:NextFunction
+// ) => {
+//   const {messages} = req.body;
+
+//   const openai = new OpenAI({
+//     apiKey:process.env.OPEN_API_KEY,
+//   });
+//   const completion = await openai.chat.completions.create({
+//     model: "gpt-4o",
+//     messages:
+//       messages.length === 1
+//       ?[
+//         {
+//           role:"system",
+//           content:"youa are the assitent that works as a reciptionist in on role and you are going to talk to usrs and help them find the right entertaitment",
+//         },
+//         ...messages,
+//       ]
+//       : messages,
+//     store:true,
+// });
+
+// res.status(200).json({
+//   messages:[
+//     ...messages,
+//     {role : "assistant" , content : completion.choices[0].message.content},
+//   ]
+// })
+// }
+
+//system prompot
+// export const generateResonse = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { prompt } = req.body; // Fixed typo
+
+//   const openai = new OpenAI({
+//     apiKey: process.env.OPEN_API_KEY,
+//   });
+
+//   try {
+//     const completion = await openai.chat.completions.create({
+//       model: "gpt-4o",
+//       messages: [
+//         {
+//           role: "system",
+//           content:
+//             "You are an assistant. Categorize the words that a user gives, assign labels, and show an output. Return this response as the following example: user:Lake,cat,Dog,Tree response:[{lable:Nature,words:['Lake','Tree'}] {label:Aniamls,words:['Cat','Dog']}",
+//         },
+//         { role: "user", content: prompt }, // Fixed typo
+//       ],
+//     });
+
+//     res.status(200).json({
+//       messages: {
+//         role: "assistant", // Fixed typo
+//         content: completion.choices[0]?.message?.content || "No response",
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+//few shot prompt
+export const generateResonse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { prompt } = req.body; // Fixed typo
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPEN_API_KEY,
+  });
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an assistant. Categorize the words that a user gives, assign labels, and show an output. Return this response as the following examples: user:Lake,cat,Dog,Tree; response:[{lable:Nature,words:['Lake','Tree'}] {label:Aniamls,words:['Cat','Dog']}",
+        },
+        { role: "user", content: prompt }, // Fixed typo
+      ],
+    });
+
+    res.status(200).json({
+      messages: {
+        role: "assistant", // Fixed typo
+        content: completion.choices[0]?.message?.content || "No response",
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+>>>>>>> test7

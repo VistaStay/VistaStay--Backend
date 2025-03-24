@@ -2,6 +2,10 @@ import { Request, Response, NextFunction } from "express";
 
 import Booking from "../infastructure/schemas/Booking";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> test7
 export const createBooking = async (
   req: Request,
   res: Response,
@@ -67,4 +71,9 @@ export const getAllBookings = async (
   } catch (error) {
     next(error);
   }
+<<<<<<< HEAD
 };
+=======
+};
+
+>>>>>>> test7
