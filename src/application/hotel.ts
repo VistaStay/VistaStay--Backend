@@ -49,29 +49,15 @@ export const createHotel = async (req: Request, res: Response, next: NextFunctio
   try {
     const hotel = CreateHotelDTO.safeParse(req.body);
 
-<<<<<<< HEAD
     if (!hotel.success) {  // Fixed spelling mistake
-=======
-    if (!hotel.success) { 
->>>>>>> test7
       throw new ValidationError(hotel.error.message);
     }
 
     await Hotel.create({
       name: hotel.data.name,
-<<<<<<< HEAD
       location: hotel.data.location, // Fixed incorrect property assignment
       image: hotel.data.image,
-      price:  parseInt(hotel.data.price) ,// Ensuring proper parsing
-=======
-      location: hotel.data.location,
-      image: hotel.data.image,
-<<<<<<< Updated upstream
-      price: hotel.data.price ,
-=======
       price: hotel.data.price ,// Ensuring proper parsing
->>>>>>> Stashed changes
->>>>>>> test7
       description: hotel.data.description,
     });
 
@@ -129,41 +115,6 @@ export const updateHotel = async (req :Request, res:Response) => {
   } catch (error) {
     
   }
-<<<<<<< HEAD
-  
-};
-
-//implement chgpt llm
-export const generateResonse= async(
-  req:Request,
-  res:Response,
-  next:NextFunction
-) => {
-  const {prompt} = req.body;
-
-  const openai = new OpenAI({
-    apiKey:process.env.OPEN_API_KEY,
-  });
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-        {
-            role: "system",
-            content: "You are a helpful assistant",
-        },
-        {
-          role: "user",
-            content: prompt,
-        }
-    ],
-    store:true,
-});
-
-  console.log(completion.choices[0].message);
-  res.status(200).json({message:completion.choices[0].message.content});
-  return;
-}
-=======
 };
 
 
@@ -305,4 +256,3 @@ export const generateResonse = async (
   }
 };
 
->>>>>>> test7

@@ -18,13 +18,8 @@ app.use("/api/hotels",hotelRouter)
 app.use("/api/users",userRouter)
 app.use(globalErrorHandlingMiddleware)
 
-<<<<<<< HEAD
-app.listen(8081, () => {
-  console.log("server is running on port 8081");
-=======
 app.listen(8080, () => {
   console.log("server is running on port 8080");
->>>>>>> test7
 });
 
 
