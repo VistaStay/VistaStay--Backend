@@ -1,8 +1,8 @@
-import { z } from "zod"
+import { z } from "zod";
 
-export const CreateHotelDTO = z.object({
-   hotelId:z.string(),
-   checkIn:z.string(),
-   checkout:z.string(),
-   roonNumber:z.number(),
-});
+export const CreateBookingDTO = z.object({
+    hotelId: z.string(),
+    checkIn: z.string(),
+    checkOut: z.string(),
+    roomNumber: z.number(),
+})

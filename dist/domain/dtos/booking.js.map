@@ -1,0 +1,1 @@
+{"version":3,"file":"booking.js","sourceRoot":"","sources":["../../../src/domain/dtos/booking.ts"],"names":[],"mappings":";;;AAAA,6BAAuB;AAEV,QAAA,cAAc,GAAG,OAAC,CAAC,MAAM,CAAC;IACpC,OAAO,EAAC,OAAC,CAAC,MAAM,EAAE;IAClB,OAAO,EAAC,OAAC,CAAC,MAAM,EAAE;IAClB,QAAQ,EAAC,OAAC,CAAC,MAAM,EAAE;IACnB,UAAU,EAAC,OAAC,CAAC,MAAM,EAAE;CACvB,CAAC,CAAC"}

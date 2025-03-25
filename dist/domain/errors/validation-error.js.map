@@ -1,0 +1,1 @@
+{"version":3,"file":"validation-error.js","sourceRoot":"","sources":["../../../src/domain/errors/validation-error.ts"],"names":[],"mappings":";;AAAA,MAAM,eAAgB,SAAQ,KAAK;IAC/B,YAAY,OAAc;QACtB,KAAK,CAAC,OAAO,CAAC,CAAC;QACf,IAAI,CAAC,IAAI,GAAG,iBAAiB,CAAC;IAClC,CAAC;CACJ;AACD,kBAAe,eAAe,CAAC"}

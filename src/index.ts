@@ -16,10 +16,11 @@ connectDB();
 
 app.use("/api/hotels",hotelRouter)
 app.use("/api/users",userRouter)
+app.use("/api/bookings",bookingRouter)
 app.use(globalErrorHandlingMiddleware)
 
-app.listen(8080, () => {
-  console.log("server is running on port 8080");
+app.listen(8081, () => {
+  console.log("server is running on port 8081");
 });
 
 
