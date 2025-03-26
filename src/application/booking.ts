@@ -25,7 +25,7 @@ export const createBooking = async (
     if (!req.auth?.userId) {
       throw new ValidationError("User authentication required");
     }
-    console.log(req.auth);
+  
 
     const { hotelId, checkIn, checkOut, roomNumber } = parsedBooking.data;
 

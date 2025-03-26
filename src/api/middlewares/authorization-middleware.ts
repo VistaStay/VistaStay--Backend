@@ -1,18 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import FobiddenError from "../../domain/errors/fobidden-error";
+import { NextFunction, Request, Response } from "express";
+import ForbiddenError from "../../domain/errors/fobidden-error";
+import { clerkClient } from "@clerk/express";
 
-interface AuthenticatedRequest extends Request {
-  auth?: {
-    userId?: string;
-    sessionClaims?: {
-      role?: string;
-    };
-  };
-}
-
-export const isAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    if (req.auth?.sessionClaims?.role !== "admin") {  // Fixed condition
-        throw new FobiddenError("Forbidden: Admin access required"); 
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+    if (!(req?.auth?.sessionClaims?.role !== "admin")) {
+        throw new ForbiddenError("Forbidden");
     }
+
     next();
-};
+}
