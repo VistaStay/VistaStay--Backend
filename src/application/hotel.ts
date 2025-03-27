@@ -49,19 +49,19 @@ export const createHotel = async (req: Request, res: Response, next: NextFunctio
   try {
     const hotel = CreateHotelDTO.safeParse(req.body);
 
-    if (!hotel.success) {  // Fixed spelling mistake
+    if (!hotel.success) {
       throw new ValidationError(hotel.error.message);
     }
 
     await Hotel.create({
       name: hotel.data.name,
-      location: hotel.data.location, // Fixed incorrect property assignment
+      location: hotel.data.location,
       image: hotel.data.image,
-      price: hotel.data.price ,// Ensuring proper parsing
+      price: hotel.data.price,
       description: hotel.data.description,
+      amenities: hotel.data.amenities || [], // Store amenities if provided, otherwise an empty array
     });
 
-    // Return response
     res.status(201).send();
   } catch (error) {
     next(error);
