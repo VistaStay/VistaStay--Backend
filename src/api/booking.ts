@@ -4,6 +4,7 @@ import {
   createBooking,
   getAllBookingsForHotel,
   getAllBookings,
+  deleteBooking
 } from "../application/booking";
 
 const bookingsRouter = express.Router();
@@ -14,5 +15,8 @@ bookingsRouter.route("/")
 
 bookingsRouter.route("/hotels/:hotelId")
   .get(isAuthenticated, getAllBookingsForHotel);
+
+bookingsRouter.route("/:bookingId")
+  .delete(isAuthenticated, deleteBooking);
 
 export default bookingsRouter;

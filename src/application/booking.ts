@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import Booking from "../infastructure/schemas/Booking"; // Fixed typo in import path
+import Booking from "../infastructure/schemas/Booking";
 import { CreateBookingDTO } from "../domain/dtos/booking";
 import ValidationError from "../domain/errors/validation-error";
 import { clerkClient } from "@clerk/express";
@@ -14,7 +14,7 @@ export const createBooking = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const parsedBooking = CreateBookingDTO.safeParse(req.body);
 
@@ -47,7 +47,7 @@ export const getAllBookingsForHotel = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const hotelId = req.params.hotelId;
     const bookings = await Booking.find({ hotelId });
@@ -69,7 +69,7 @@ export const getAllBookingsForHotel = async (
                   firstName: user.firstName,
                   lastName: user.lastName,
                 }
-              : null, // Handle missing user case
+              : null,
           };
         } catch (error) {
           console.error(`Failed to fetch user data for userId: ${el.userId}`);
@@ -96,10 +96,39 @@ export const getAllBookings = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const bookings = await Booking.find();
     res.status(200).json(bookings);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteBooking = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const bookingId = req.params.bookingId;
+    const userId = req.auth?.userId;
+
+    if (!userId) {
+      throw new ValidationError("User authentication required");
+    }
+
+    const booking = await Booking.findOneAndDelete({
+      _id: bookingId,
+      userId: userId
+    });
+
+    if (!booking) {
+      res.status(404).json({ message: "Booking not found or not authorized" });
+      return;
+    }
+
+    res.status(200).json({ message: "Booking deleted successfully" });
   } catch (error) {
     next(error);
   }
