@@ -5,4 +5,5 @@ export const CreateBookingDTO = z.object({
     checkIn: z.string(),
     checkOut: z.string(),
     roomNumber: z.number(),
-})
+    totalprice: z.number(),
+});

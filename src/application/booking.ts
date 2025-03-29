@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import Booking from "../infastructure/schemas/Booking"; // Fixed typo in path
+import Booking from "../infastructure/schemas/Booking"; // Fixed typo in import path
 import { CreateBookingDTO } from "../domain/dtos/booking";
 import ValidationError from "../domain/errors/validation-error";
 import { clerkClient } from "@clerk/express";
@@ -19,26 +19,25 @@ export const createBooking = async (
     const parsedBooking = CreateBookingDTO.safeParse(req.body);
 
     if (!parsedBooking.success) {
-      throw new ValidationError(parsedBooking.error.message);
+      throw new ValidationError(parsedBooking.error.errors.map(e => e.message).join(", "));
     }
 
     if (!req.auth?.userId) {
       throw new ValidationError("User authentication required");
     }
-  
 
-    const { hotelId, checkIn, checkOut, roomNumber } = parsedBooking.data;
+    const { hotelId, checkIn, checkOut, roomNumber, totalprice } = parsedBooking.data;
 
-    // Add the booking
-    await Booking.create({
+    const newBooking = await Booking.create({
       hotelId,
       userId: req.auth.userId,
       checkIn,
       checkOut,
       roomNumber,
+      totalprice
     });
 
-    res.status(201).send();
+    res.status(201).json(newBooking);
   } catch (error) {
     next(error);
   }
@@ -63,11 +62,14 @@ export const getAllBookingsForHotel = async (
             checkIn: el.checkIn,
             checkOut: el.checkOut,
             roomNumber: el.roomNumber,
-            user: {
-              id: user.id,
-              firstName: user.firstName,
-              lastName: user.lastName,
-            },
+            totalprice: el.totalprice,
+            user: user
+              ? {
+                  id: user.id,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                }
+              : null, // Handle missing user case
           };
         } catch (error) {
           console.error(`Failed to fetch user data for userId: ${el.userId}`);
@@ -77,7 +79,8 @@ export const getAllBookingsForHotel = async (
             checkIn: el.checkIn,
             checkOut: el.checkOut,
             roomNumber: el.roomNumber,
-            user: null, // Handle missing user case
+            totalprice: el.totalprice,
+            user: null,
           };
         }
       })
