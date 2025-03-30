@@ -15,8 +15,9 @@
 "scripts": {
   "dev": "nodemon src/index.ts",
   "start": "node ./dist/index.js",
-  "build": "npm install && tsc && mkdir -p public || true"
+  "build": "npm install && tsc"
 }
+
 ,
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
