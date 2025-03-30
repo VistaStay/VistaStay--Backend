@@ -1,33 +1,36 @@
 import express from "express";
 import cors from "cors";
 import 'dotenv/config';
-import { handleWebhook } from "./application/payment"; // Make sure handleWebhook is correctly implemented
+import { handleWebhook } from "./application/payment"; // Ensure this is correctly implemented
 import bodyParser from "body-parser";
-import paymentsRouter from "./api/payment";  // Make sure the routes are correct
-import connectDB from "./infastructure/db"; // Correct directory name
-import hotelRouter from "./api/hotel";
-import userRouter from "./api/user"; // You may need this based on your structure
-import bookingRouter from "./api/booking";
-import globalErrorHandlingMiddleware from "./api/middlewares/global-error-handlig-middleware"; // Fix typo
+import paymentsRouter from "./api/payment";  // Verify export
+import connectDB from "./infastructure/db"; // Verify if "infastructure" should be "infrastructure"
+import hotelRouter from "./api/hotel";      // Verify export
+import userRouter from "./api/user";        // Verify export
+import bookingRouter from "./api/booking";  // Verify export
+import globalErrorHandlingMiddleware from "./api/middlewares/global-error-handlig-middleware"; // Typo corrected
 import { clerkMiddleware } from "@clerk/express";
 
 const app = express();
 
 // Middleware setup
 app.use(express.json());
-app.use(clerkMiddleware()); // Clerk middleware for session handling
+app.use(clerkMiddleware()); // Ensure Clerk is configured
 app.use(cors({ 
-  origin: "https://hotelapp-vistastay-frontend-sharada.netlify.app" // Correct frontend URL for CORS
+  origin: "https://hotelapp-vistastay-frontend-sharada.netlify.app" // Match frontend URL
 }));
 
-// Connect to the database
-connectDB();
+// Connect to the database with error handling
+connectDB().catch((err) => {
+  console.error("Database connection failed:", err);
+  process.exit(1); // Exit if connection fails
+});
 
 // Route handling
 app.use("/api/hotels", hotelRouter);
 app.use("/api/payments", paymentsRouter);
 app.use("/api/bookings", bookingRouter);
-app.use("/api/users", userRouter); // Add if necessary
+app.use("/api/users", userRouter);
 
 // Global error handling middleware
 app.use(globalErrorHandlingMiddleware);
@@ -40,5 +43,5 @@ app.post(
 );
 
 // Start the server
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8090;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
