@@ -13,14 +13,25 @@ import { clerkMiddleware } from "@clerk/express";
 
 const app = express();
 
-// Middleware setup
+// Configure CORS to allow your frontend domain
+const corsOptions = {
+  origin: "https://hotelapp-vistastay-frontend-sharada.netlify.app",
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type, Authorization",
+  credentials: true
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Handle preflight OPTIONS requests
+app.options("*", cors(corsOptions));
+
+// Other middleware
 app.use(express.json());
 app.use(clerkMiddleware());
-app.use(cors({
-  origin: 'https://hotelapp-vistastay-frontend-sharada.netlify.app'
-}));
 
-// Connect to the database with serverless-friendly handling
+// Database connection middleware
 const connectWithRetry = async () => {
   try {
     await connectDB();
@@ -31,7 +42,6 @@ const connectWithRetry = async () => {
   }
 };
 
-// Middleware to ensure DB connection before handling requests
 const dbConnectionMiddleware = (req: Request, res: Response, next: NextFunction) => {
   connectWithRetry()
     .then(() => next())
@@ -40,21 +50,21 @@ const dbConnectionMiddleware = (req: Request, res: Response, next: NextFunction)
 
 app.use(dbConnectionMiddleware);
 
-// Route handling
+// Routes
 app.use("/api/hotels", hotelRouter);
 app.use("/api/payments", paymentsRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/users", userRouter);
 
-// Global error handling middleware
-app.use(globalErrorHandlingMiddleware);
-
-// Stripe webhook handling
+// Stripe webhook route (if needed)
 app.post(
   "/api/stripe/webhook",
   bodyParser.raw({ type: "application/json" }),
   handleWebhook
 );
+
+// Global error handling middleware
+app.use(globalErrorHandlingMiddleware);
 
 // Export for Vercel serverless
 export default app;

@@ -11,28 +11,6 @@
         "src": "/(.*)",
         "dest": "/dist/index.js"
       }
-    ],
-    "headers": [
-      {
-        "source": "/api/(.*)",
-        "headers": [
-          {
-            "key": "Access-Control-Allow-Origin",
-            "value": "https://hotelapp-vistastay-frontend-sharada.netlify.app"
-          },
-          {
-            "key": "Access-Control-Allow-Methods",
-            "value": "GET,POST,PUT,DELETE"
-          },
-          {
-            "key": "Access-Control-Allow-Headers",
-            "value": "Content-Type, Authorization"
-          },
-          {
-            "key": "Access-Control-Allow-Credentials",
-            "value": "true"
-          }
-        ]
-      }
     ]
   }
+  
