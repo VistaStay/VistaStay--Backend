@@ -16,8 +16,8 @@ const app = express();
 // Middleware setup
 app.use(express.json());
 app.use(clerkMiddleware()); // Ensure Clerk is configured
-app.use(cors({ 
-  origin: "https://hotelapp-vistastay-frontend-sharada.netlify.app" // Match frontend URL
+app.use(cors({
+  origin: 'https://hotelapp-vistastay-frontend-sharada.netlify.app'
 }));
 
 // Connect to the database with error handling
