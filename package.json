@@ -15,8 +15,9 @@
 "scripts": {
   "dev": "nodemon src/index.ts",
   "start": "node ./dist/index.js",
-  "build": "npm install && tsc && if not exist public mkdir public"
-},
+  "build": "npm install && tsc && mkdir -p public || true"
+}
+,
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
     "@clerk/express": "^1.3.5",
