@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import util from "util";
-import Booking from "../infrastructure/schemas/Booking";
-import stripe from "../infrastructure/stripe";
-import Hotel from "../infrastructure/schemas/Hotel";
+import Booking from "../infastructure/schemas/Booking";
+import stripe from "../infastructure/strip";
+import Hotel from "../infastructure/schemas/Hotel";
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 const FRONTEND_URL = process.env.FRONTEND_URL as string;
