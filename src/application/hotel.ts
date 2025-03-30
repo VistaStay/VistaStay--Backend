@@ -16,9 +16,16 @@ const sleep = (ms: number) => {
 export const getAllHotels = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const hotels = await Hotel.find();
+    if (!hotels) {
+      console.log("No hotels found in database");
+      res.status(200).json([]);
+      return;
+    }
+    console.log("Hotels retrieved successfully:", hotels.length);
     res.status(200).json(hotels);
     return;
   } catch (error) {
+    console.error("Error retrieving hotels:", error);
     next(error);
   }
 };

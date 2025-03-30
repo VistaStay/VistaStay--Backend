@@ -1,30 +1,44 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import 'dotenv/config';
-import { handleWebhook } from "./application/payment"; // Ensure this is correctly implemented
+import { handleWebhook } from "./application/payment";
 import bodyParser from "body-parser";
-import paymentsRouter from "./api/payment";  // Verify export
-import connectDB from "./infastructure/db"; // Verify if "infastructure" should be "infrastructure"
-import hotelRouter from "./api/hotel";      // Verify export
-import userRouter from "./api/user";        // Verify export
-import bookingRouter from "./api/booking";  // Verify export
-import globalErrorHandlingMiddleware from "./api/middlewares/global-error-handlig-middleware"; // Typo corrected
+import paymentsRouter from "./api/payment";
+import connectDB from "./infastructure/db";
+import hotelRouter from "./api/hotel";
+import userRouter from "./api/user";
+import bookingRouter from "./api/booking";
+import globalErrorHandlingMiddleware from "./api/middlewares/global-error-handlig-middleware";
 import { clerkMiddleware } from "@clerk/express";
 
 const app = express();
 
 // Middleware setup
 app.use(express.json());
-app.use(clerkMiddleware()); // Ensure Clerk is configured
+app.use(clerkMiddleware());
 app.use(cors({
   origin: 'https://hotelapp-vistastay-frontend-sharada.netlify.app'
 }));
 
-// Connect to the database with error handling
-connectDB().catch((err) => {
-  console.error("Database connection failed:", err);
-  process.exit(1); // Exit if connection fails
-});
+// Connect to the database with serverless-friendly handling
+const connectWithRetry = async () => {
+  try {
+    await connectDB();
+    console.log("Database connected successfully");
+  } catch (err) {
+    console.error("Database connection failed:", err);
+    throw new Error("Failed to connect to database");
+  }
+};
+
+// Middleware to ensure DB connection before handling requests
+const dbConnectionMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  connectWithRetry()
+    .then(() => next())
+    .catch((error) => next(error));
+};
+
+app.use(dbConnectionMiddleware);
 
 // Route handling
 app.use("/api/hotels", hotelRouter);
@@ -42,6 +56,5 @@ app.post(
   handleWebhook
 );
 
-// Start the server
-const PORT = process.env.PORT || 8090;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Export for Vercel serverless
+export default app;
