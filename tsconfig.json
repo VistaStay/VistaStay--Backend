@@ -1,16 +1,17 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
-        "module": "CommonJS",
-        "sourceMap": true,
-        "outDir": "dist",
-        "strict": true,
-        "lib": ["ESNext"],
-        "esModuleInterop": true,
-        "types": ["node", "express"],
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+      "target": "ESNext",
+      "module": "CommonJS",
+      "sourceMap": true,
+      "outDir": "dist",  // This specifies where the compiled files should go
+      "strict": true,
+      "lib": ["ESNext"],
+      "esModuleInterop": true,
+      "types": ["node", "express"],
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
     },
     "include": ["src/**/*.ts", "src/types/**/*.d.ts"],
     "exclude": ["node_modules"]
-}
+  }
+  
