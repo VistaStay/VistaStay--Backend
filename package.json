@@ -13,9 +13,9 @@
   "license": "ISC",
   "author": "",
   "scripts": {
-      "dev": "nodemon src/index.ts",
-      "start": "node ./dist/index.js",
-      "build": "npm install && tsc"    
+    "dev": "nodemon src/index.ts",
+    "start": "node ./dist/index.js",
+    "build": "npm install && tsc"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
@@ -30,6 +30,7 @@
     "mongoose": "^8.10.1",
     "nodemon": "^3.1.9",
     "openai": "^4.89.0",
+    "stripe": "^17.7.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "@types/express": "^5.0.0",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.13.5",
+    "@types/stripe": "^8.0.416",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }

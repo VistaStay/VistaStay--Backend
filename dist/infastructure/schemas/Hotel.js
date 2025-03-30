@@ -36,6 +36,10 @@ const hotelSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    amenities: {
+        type: [String], // Array of strings to store selected amenities
+        required: false, // Optional field
+    },
 });
 const Hotel = mongoose_1.default.model("Hotel", hotelSchema);
 exports.default = Hotel;

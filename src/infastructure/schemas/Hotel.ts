@@ -36,6 +36,10 @@ const hotelSchema = new mongoose.Schema({
     type: [String], // Array of strings to store selected amenities
     required: false, // Optional field
   },
+  stripePriceId: {
+    type: String,
+    required: true,
+  }
 });
 
 const Hotel = mongoose.model("Hotel", hotelSchema);
