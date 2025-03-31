@@ -13,7 +13,7 @@ import { handleWebhook } from "./application/payment";
 const app = express();
 app.use(express.json());
 app.use(clerkMiddleware());
-app.use(cors());
+app.use(cors({ origin: "https://hotelapp-vistastay-frontend-sharada.netlify.app/" }));
 connectDB();
 app.post(
   "/api/stripe/webhook",
