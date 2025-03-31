@@ -5,6 +5,7 @@ import ValidationError from "../domain/errors/validation-error";
 import { CreateHotelDTO, HotelFilterDTO } from "../domain/dtos/hotel";
 import OpenAI from "openai";
 import mongoose from "mongoose";
+import stripe from "../infastructure/strip";
 
 const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -41,23 +42,43 @@ export const getHotelById = async (req: Request, res: Response, next: NextFuncti
 };
 
 /**
- * Creates a new hotel.
+ * Creates a new hotel with Stripe payment integration.
  */
 export const createHotel = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const hotel = CreateHotelDTO.safeParse(req.body);
-
-    if (!hotel.success) {
-      throw new ValidationError(hotel.error.message);
+    // Validate input using Zod schema (CreateHotelDTO)
+    const validationResult = CreateHotelDTO.safeParse(req.body);
+    if (!validationResult.success) {
+      throw new ValidationError(validationResult.error.message);
     }
+    const hotelData = validationResult.data;
 
-    await Hotel.create({
-      name: hotel.data.name,
-      location: hotel.data.location,
-      image: hotel.data.image,
-      price: hotel.data.price,
-      description: hotel.data.description,
-      amenities: hotel.data.amenities || [],
+    // Parse price to float and convert to cents for Stripe
+    const priceInDollars = parseFloat(hotelData.price);
+    if (isNaN(priceInDollars)) {
+      throw new ValidationError("Price must be a valid number");
+    }
+    const priceInCents = Math.round(priceInDollars * 100);
+
+    // Create a product in Stripe
+    const stripeProduct = await stripe.products.create({
+      name: hotelData.name,
+      description: hotelData.description,
+      default_price_data: {
+        unit_amount: priceInCents,
+        currency: "usd",
+      },
+    });
+
+    // Create the hotel with the Stripe price ID
+    const hotel = await Hotel.create({
+      name: hotelData.name,
+      location: hotelData.location,
+      image: hotelData.image,
+      price: hotelData.price,
+      description: hotelData.description,
+      amenities: hotelData.amenities || [],
+      stripePriceId: stripeProduct.default_price,
     });
 
     res.status(201).send();
@@ -116,7 +137,7 @@ export const updateHotel = async (req: Request, res: Response, next: NextFunctio
 /**
  * Generates a response using OpenAI based on a prompt.
  */
-export const generateResonse = async (req: Request, res: Response, next: NextFunction) => {
+export const generateResponse = async (req: Request, res: Response, next: NextFunction) => {
   const { prompt } = req.body;
 
   const openai = new OpenAI({
