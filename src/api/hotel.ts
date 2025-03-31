@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllHotels, getHotelById, createHotel, deleteHotel, updateHotel, getHotelsByFilters, generateResponse } from "../application/hotel";
+import { getAllHotels, getHotelById, createHotel, deleteHotel, getHotelsByFilters, updateHotel, generateResponse} from "../application/hotel";
 import { isAuthenticated } from "./middlewares/authentication-middleware";
 import { isAdmin } from "./middlewares/authorization-middleware";
 import { createEmbeddings } from "./embedding";

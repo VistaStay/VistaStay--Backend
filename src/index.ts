@@ -26,8 +26,8 @@ app.use("/api/bookings",bookingRouter)
 app.use("/api/payments", paymentsRouter);
 app.use(globalErrorHandlingMiddleware)
 
-app.listen(8080, () => {
-  console.log("server is running on port 8080");
+app.listen(8083, () => {
+  console.log("server is running on port 8083");
 });
 
 

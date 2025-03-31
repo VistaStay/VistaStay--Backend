@@ -52,9 +52,10 @@ export const createHotel = async (req: Request, res: Response, next: NextFunctio
       throw new ValidationError(validationResult.error.message);
     }
     const hotelData = validationResult.data;
+    const priceInDollars = parseFloat(hotelData.price.toString());
 
     // Parse price to float and convert to cents for Stripe
-    const priceInDollars = parseFloat(hotelData.price);
+    
     if (isNaN(priceInDollars)) {
       throw new ValidationError("Price must be a valid number");
     }
