@@ -12,7 +12,7 @@ const retrive_1 = require("../application/retrive");
 const hotelRouter = express_1.default.Router();
 hotelRouter.route("/").get(hotel_1.getAllHotels).post(authentication_middleware_1.isAuthenticated, authorization_middleware_1.isAdmin, hotel_1.createHotel);
 // Specific routes should come before dynamic routes
-hotelRouter.route("/llm").post(hotel_1.generateResonse);
+hotelRouter.route("/llm").post(hotel_1.generateResponse);
 hotelRouter.route("/embeddings/create").post(embedding_1.createEmbeddings);
 hotelRouter.route("/search/retrive").get(retrive_1.retrieve);
 hotelRouter.route("/filter").get(hotel_1.getHotelsByFilters);

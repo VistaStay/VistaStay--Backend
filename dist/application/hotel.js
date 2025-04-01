@@ -3,13 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHotelsByFilters = exports.generateResonse = exports.updateHotel = exports.deleteHotel = exports.createHotel = exports.getHotelById = exports.getAllHotels = void 0;
+exports.getHotelsByFilters = exports.generateResponse = exports.updateHotel = exports.deleteHotel = exports.createHotel = exports.getHotelById = exports.getAllHotels = void 0;
 const Hotel_1 = __importDefault(require("../infastructure/schemas/Hotel"));
 const not_found_error_1 = __importDefault(require("../domain/errors/not-found-error"));
 const validation_error_1 = __importDefault(require("../domain/errors/validation-error"));
 const hotel_1 = require("../domain/dtos/hotel");
 const openai_1 = __importDefault(require("openai"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const strip_1 = __importDefault(require("../infastructure/strip"));
 const sleep = (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -46,21 +47,40 @@ const getHotelById = async (req, res, next) => {
 };
 exports.getHotelById = getHotelById;
 /**
- * Creates a new hotel.
+ * Creates a new hotel with Stripe payment integration.
  */
 const createHotel = async (req, res, next) => {
     try {
-        const hotel = hotel_1.CreateHotelDTO.safeParse(req.body);
-        if (!hotel.success) {
-            throw new validation_error_1.default(hotel.error.message);
+        // Validate input using Zod schema (CreateHotelDTO)
+        const validationResult = hotel_1.CreateHotelDTO.safeParse(req.body);
+        if (!validationResult.success) {
+            throw new validation_error_1.default(validationResult.error.message);
         }
-        await Hotel_1.default.create({
-            name: hotel.data.name,
-            location: hotel.data.location,
-            image: hotel.data.image,
-            price: hotel.data.price,
-            description: hotel.data.description,
-            amenities: hotel.data.amenities || [],
+        const hotelData = validationResult.data;
+        const priceInDollars = parseFloat(hotelData.price.toString());
+        // Parse price to float and convert to cents for Stripe
+        if (isNaN(priceInDollars)) {
+            throw new validation_error_1.default("Price must be a valid number");
+        }
+        const priceInCents = Math.round(priceInDollars * 100);
+        // Create a product in Stripe
+        const stripeProduct = await strip_1.default.products.create({
+            name: hotelData.name,
+            description: hotelData.description,
+            default_price_data: {
+                unit_amount: priceInCents,
+                currency: "usd",
+            },
+        });
+        // Create the hotel with the Stripe price ID
+        const hotel = await Hotel_1.default.create({
+            name: hotelData.name,
+            location: hotelData.location,
+            image: hotelData.image,
+            price: hotelData.price,
+            description: hotelData.description,
+            amenities: hotelData.amenities || [],
+            stripePriceId: stripeProduct.default_price,
         });
         res.status(201).send();
     }
@@ -116,7 +136,7 @@ exports.updateHotel = updateHotel;
 /**
  * Generates a response using OpenAI based on a prompt.
  */
-const generateResonse = async (req, res, next) => {
+const generateResponse = async (req, res, next) => {
     const { prompt } = req.body;
     const openai = new openai_1.default({
         apiKey: process.env.OPEN_API_KEY,
@@ -143,7 +163,7 @@ const generateResonse = async (req, res, next) => {
         next(error);
     }
 };
-exports.generateResonse = generateResonse;
+exports.generateResponse = generateResponse;
 /**
  * Retrieves hotels based on filter criteria such as location, price range, and amenities.
  * The amenities filter now uses $and with $regex for case-insensitive matching to fix the issue.

@@ -13,7 +13,9 @@ import { handleWebhook } from "./application/payment";
 const app = express();
 app.use(express.json());
 app.use(clerkMiddleware());
-app.use(cors({ origin: "https://hotelapp-vistastay-frontend-sharada.netlify.app/" }));
+
+app.use(cors({ origin: process.env.FRONTEND_URL }));
+
 connectDB();
 app.post(
   "/api/stripe/webhook",
