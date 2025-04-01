@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-
 import Booking from "../infastructure/schemas/Booking";
 import { CreateBookingDTO } from "../domain/dtos/booking";
 import ValidationError from "../domain/errors/validation-error";
 import { clerkClient } from "@clerk/express";
 import NotFoundError from "../domain/errors/not-found-error";
-import Hotel from "../infastructure/schemas/Hotel";
 
 export const createBooking = async (
   req: Request,

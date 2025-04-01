@@ -13,11 +13,11 @@ const hotelSchema = new mongoose.Schema({
     type: Number,
     min: 1,
     max: 5,
-    required: false, // Optional field
+    required: false, 
   },
   reviews: {
     type: Number,
-    required: false, // Optional field
+    required: false, 
   },
   image: {
     type: String,
@@ -26,15 +26,15 @@ const hotelSchema = new mongoose.Schema({
   price: {
     type: Number,
     required: true,
-    min: 0, // Ensure price isn't negative
+    min: 0, 
   },
   description: {
     type: String,
     required: true,
   },
   amenities: {
-    type: [String], // Array of strings to store selected amenities
-    required: false, // Optional field
+    type: [String], 
+    required: false, 
   },
   stripePriceId: {
     type: String,

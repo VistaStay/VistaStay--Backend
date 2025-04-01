@@ -1,9 +1,3 @@
-//password
-//fXHqCM6NYRHwFZ82
-
-//string
-//mongodb+srv://sharadakanchana417:fXHqCM6NYRHwFZ82@hotelapp.1veed.mongodb.net/?retryWrites=true&w=majority&appName=HotelApp
-
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
@@ -16,7 +10,7 @@ const connectDB = async () => {
             throw new Error("MONGODB_URL is not set");
         }
 
-        await mongoose.connect(MONGODB_URL); // ✅ Remove outdated options
+        await mongoose.connect(MONGODB_URL); 
 
         console.log("Connected to the database........");
     } catch (error) {

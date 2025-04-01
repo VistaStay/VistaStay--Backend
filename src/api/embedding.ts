@@ -1,9 +1,9 @@
-import { MongoDBAtlasVectorSearch } from "@langchain/mongodb"; // Correct import
+import { MongoDBAtlasVectorSearch } from "@langchain/mongodb"; 
 
 import mongoose from "mongoose";
-import Hotel from "../infastructure/schemas/Hotel"; // Check path if needed
-import { NextFunction, Request, Response } from "express"; // Missing import for types
-import { OpenAIEmbeddings } from "@langchain/openai"; // Correct import
+import Hotel from "../infastructure/schemas/Hotel"; 
+import { NextFunction, Request, Response } from "express"; 
+import { OpenAIEmbeddings } from "@langchain/openai"; 
 import { Document } from "@langchain/core/documents";
 
 export const createEmbeddings = async (
@@ -22,7 +22,7 @@ export const createEmbeddings = async (
             indexName: "vector_index",
         });
 
-        const hotels = await Hotel.find({}); // Fixed typo: "hotel" -> "hotels"
+        const hotels = await Hotel.find({}); 
 
         const docs = hotels.map((hotel) => {
             const { _id, location, price, description } = hotel;
