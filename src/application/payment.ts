@@ -152,11 +152,15 @@ export const retrieveSessionStatus = async (req: Request, res: Response) => {
       booking: booking,
       hotel: hotel,
       status: checkoutSession.status,
+      payment_status: checkoutSession.payment_status, // Added payment_status
       customer_email: checkoutSession.customer_details?.email,
-      paymentStatus: booking.paymentStatus,
+      bookingPaymentStatus: booking.paymentStatus,   // Renamed to avoid confusion
     });
   } catch (error) {
     console.error("Error retrieving session status:", error);
-    res.status(500).json({ message: "Failed to retrieve session status", error: error instanceof Error ? error.message : "Unknown error" });
+    res.status(500).json({ 
+      message: "Failed to retrieve session status", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    });
   }
 };

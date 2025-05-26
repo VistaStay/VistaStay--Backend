@@ -18,8 +18,8 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  roomNumber: {
-    type: Number,
+  roomNumbers: {
+    type: [Number],
     required: true,
   },
   paymentStatus: {

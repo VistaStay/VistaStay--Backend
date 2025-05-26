@@ -1,9 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import Booking from "../infastructure/schemas/Booking";
-import { CreateBookingDTO } from "../domain/dtos/booking";
+import { z } from "zod";
 import ValidationError from "../domain/errors/validation-error";
 import { clerkClient } from "@clerk/express";
 import NotFoundError from "../domain/errors/not-found-error";
+
+// Updated CreateBookingDTO schema to handle string inputs for dates
+const CreateBookingDTO = z.object({
+  hotelId: z.string(),
+  checkIn: z.string().transform((val) => new Date(val)),
+  checkOut: z.string().transform((val) => new Date(val)),
+  numberOfRooms: z.number().int().min(1).max(5),
+}).refine(
+  (data) => !isNaN(data.checkIn.getTime()) && !isNaN(data.checkOut.getTime()),
+  { message: "Invalid date format" }
+).refine(
+  (data) => data.checkOut > data.checkIn,
+  { message: "Check-out date must be after check-in date", path: ["checkOut"] }
+);
 
 export const createBooking = async (
   req: Request,
@@ -12,42 +26,49 @@ export const createBooking = async (
 ) => {
   try {
     const booking = CreateBookingDTO.safeParse(req.body);
-    console.log(booking);
-    // Validate the request data
     if (!booking.success) {
       throw new ValidationError(booking.error.message);
     }
 
     const user = req.auth;
+    const { hotelId, checkIn, checkOut, numberOfRooms } = booking.data;
 
-    // Add the booking
-    const newBooking = await Booking.create({
-      hotelId: booking.data.hotelId,
-      userId: user.userId,
-      checkIn: booking.data.checkIn,
-      checkOut: booking.data.checkOut,
-      roomNumber: await (async () => {
-        let roomNumber;
-        let isRoomAvailable = false;
-        while (!isRoomAvailable) {
-          roomNumber = Math.floor(Math.random() * 1000) + 1;
-          const existingBooking = await Booking.findOne({
-            hotelId: booking.data.hotelId,
-            roomNumber: roomNumber,
-            $or: [
-              {
-                checkIn: { $lte: booking.data.checkOut },
-                checkOut: { $gte: booking.data.checkIn },
-              },
-            ],
-          });
-          isRoomAvailable = !existingBooking;
-        }
-        return roomNumber;
-      })(),
+    // Optional: Log the transformed dates for debugging
+    console.log("Transformed checkIn:", checkIn);
+    console.log("Transformed checkOut:", checkOut);
+
+    // Find overlapping bookings
+    const overlappingBookings = await Booking.find({
+      hotelId: hotelId,
+      $or: [
+        { checkIn: { $lte: checkOut }, checkOut: { $gte: checkIn } },
+      ],
     });
 
-    // Return the response
+    // Collect all booked room numbers
+    const bookedRoomNumbers = new Set<number>();
+    overlappingBookings.forEach((b) => {
+      b.roomNumbers.forEach((rn) => bookedRoomNumbers.add(rn));
+    });
+
+    // Assign unique room numbers
+    const roomNumbers: number[] = [];
+    while (roomNumbers.length < numberOfRooms) {
+      const roomNumber = Math.floor(Math.random() * 1000) + 1;
+      if (!bookedRoomNumbers.has(roomNumber) && !roomNumbers.includes(roomNumber)) {
+        roomNumbers.push(roomNumber);
+      }
+    }
+
+    // Create the booking
+    const newBooking = await Booking.create({
+      hotelId: hotelId,
+      userId: user.userId,
+      checkIn: checkIn,
+      checkOut: checkOut,
+      roomNumbers: roomNumbers,
+    });
+
     res.status(201).json(newBooking);
     return;
   } catch (error) {
@@ -55,6 +76,7 @@ export const createBooking = async (
   }
 };
 
+// Other functions remain unchanged
 export const getAllBookingsForHotel = async (
   req: Request,
   res: Response,
@@ -71,7 +93,7 @@ export const getAllBookingsForHotel = async (
           hotelId: el.hotelId,
           checkIn: el.checkIn,
           checkOut: el.checkOut,
-          roomNumber: el.roomNumber,
+          roomNumbers: el.roomNumbers,
           user: {
             id: user.id,
             firstName: user.firstName,
